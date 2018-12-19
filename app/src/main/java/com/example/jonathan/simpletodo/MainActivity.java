@@ -2,6 +2,7 @@ package com.example.jonathan.simpletodo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -98,6 +99,23 @@ public class MainActivity extends AppCompatActivity {
             FileUtils.writeLines(getDataFile(), items);
         } catch (IOException e) {
             Log.e("MainActivity", "Error writing to file", e);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == RESULT_OK && requestCode == EDIT_REQUEST_CODE) {
+            String updatedItem = data.getExtras().getString(ITEM_TEXT);
+            int position = data.getExtras().getInt(ITEM_POSITION);
+
+            items.set(position, updatedItem);
+            itemsAdapter.notifyDataSetChanged();
+
+            writeItems();
+
+            Toast.makeText(this, "Item Updated", Toast.LENGTH_SHORT).show();
         }
     }
 }
